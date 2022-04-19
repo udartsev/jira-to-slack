@@ -82,9 +82,10 @@ func (f *Formatter) JIRAEventToSlackMessage(event *jira.Event) *slack.Message {
 			}},
 		}
 	case event.IsIssueUpdated():
+		// @TODO: add icons here
 		statusText := ""
 		if event.Changelog.Items != nil {
-			statusText = "[" + event.Changelog.Items[0].From + "] to [*" + event.Changelog.Items[0].To + "*]"
+			statusText = "*[" + event.Changelog.Items[0].To + "]*"
 		}
 
 		return &slack.Message{
