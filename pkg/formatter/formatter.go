@@ -85,18 +85,16 @@ func (f *Formatter) JIRAEventToSlackMessage(event *jira.Event) *slack.Message {
 		// @TODO: add icons here
 		statusText := ""
 		if event.Changelog.Items != nil && len(event.Changelog.Items) > 0 {
-			statusText = "*[" + event.Changelog.Items[0].To + "]*"
+			statusText = event.User.Name + "update status to *[" + event.Changelog.Items[0].To + "]*"
 		}
 
 		return &slack.Message{
 			Text: f.text(event, "*updated*", ""),
 			Attachments: []slack.Attachment{{
-				AuthorName: event.User.Name,
-				AuthorIcon: event.User.AvatarUrls.Big,
-				Title:      f.title(event),
-				TitleLink:  event.Issue.BrowserURL(),
-				Text:       statusText,
-				Timestamp:  event.UnixTime(),
+				Title:     f.title(event),
+				TitleLink: event.Issue.BrowserURL(),
+				Text:      statusText,
+				Timestamp: event.UnixTime(),
 			}},
 		}
 
