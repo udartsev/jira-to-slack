@@ -9,6 +9,7 @@ import (
 	"net/http"
 	"net/url"
 
+	"github.com/gobuffalo/envy"
 	"github.com/int128/jira-to-slack/pkg/jira"
 	"github.com/int128/jira-to-slack/pkg/usecases"
 	"github.com/int128/slack/dialect"
@@ -31,6 +32,7 @@ type WebhookParams struct {
 
 func parseWebhookParams(q url.Values) (*WebhookParams, error) {
 	var p WebhookParams
+
 	p.Webhook = q.Get("webhook")
 	if p.Webhook == "" {
 		return nil, fmt.Errorf("missing query parameter. Request with ?webhook=https://hooks.slack.com/xxx")
@@ -60,6 +62,12 @@ func parseWebhookParams(q url.Values) (*WebhookParams, error) {
 }
 
 func (h *Webhook) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	if envy.Get("PRINT_JSON", "false") == "true" {
+		b, err := io.ReadAll(r.Body)
+		if err == nil {
+			fmt.Printf("%s", b)
+		}
+	}
 	code, err := h.Serve(r.Context(), r.URL.Query(), r.Body)
 	if err != nil {
 		http.Error(w, err.Error(), code)
