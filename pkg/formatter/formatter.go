@@ -95,7 +95,7 @@ func (f *Formatter) JIRAEventToSlackMessage(event *jira.Event) *slack.Message {
 				AuthorIcon: event.User.AvatarUrls.Big,
 				Title:      f.title(event),
 				TitleLink:  event.Issue.BrowserURL(),
-				Text:       statusText
+				Text:       statusText,
 				Timestamp:  event.UnixTime(),
 			}},
 		}
