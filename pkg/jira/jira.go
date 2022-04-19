@@ -53,7 +53,12 @@ func (s *Event) UnixTime() int64 {
 
 // User is a user
 type User struct {
-	Name string `json:"name"`
+	Name       string `json:"name"`
+	AvatarUrls struct {
+		Small  string `json:"16x16"`
+		Medium string `json:"24x24"`
+		Big    string `json:"32x32"`
+	}
 }
 
 // Issue is an issue
