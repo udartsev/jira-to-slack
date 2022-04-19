@@ -23,16 +23,6 @@ func New(d dialect.Dialect) *Formatter {
 // JIRAEventToSlackMessage formats a JIRA event to a Slack message.
 func (f *Formatter) JIRAEventToSlackMessage(event *jira.Event) *slack.Message {
 	switch {
-	case event.IsIssueCreated():
-		return &slack.Message{
-			Text: f.text(event, "created", f.mentions(event.Issue.Fields.Description)),
-			Attachments: []slack.Attachment{{
-				Title:     f.title(event),
-				TitleLink: event.Issue.BrowserURL(),
-				Text:      event.Issue.Fields.Description,
-				Timestamp: event.UnixTime(),
-			}},
-		}
 	case event.IsIssueCommented():
 		return &slack.Message{
 			Text: f.text(event, "commented to", f.mentions(event.Comment.Body)),
@@ -72,15 +62,41 @@ func (f *Formatter) JIRAEventToSlackMessage(event *jira.Event) *slack.Message {
 				Timestamp: event.UnixTime(),
 			}},
 		}
+	case event.IsIssueCreated():
+		return &slack.Message{
+			Text: f.text(event, "*created*", f.mentions(event.Issue.Fields.Description)),
+			Attachments: []slack.Attachment{{
+				Title:     f.title(event),
+				TitleLink: event.Issue.BrowserURL(),
+				Text:      event.Issue.Fields.Description,
+				Timestamp: event.UnixTime(),
+			}},
+		}
 	case event.IsIssueDeleted():
 		return &slack.Message{
-			Text: f.text(event, "deleted", ""),
+			Text: f.text(event, "*deleted*", ""),
 			Attachments: []slack.Attachment{{
 				Title:     f.title(event),
 				TitleLink: event.Issue.BrowserURL(),
 				Timestamp: event.UnixTime(),
 			}},
 		}
+	case event.IsIssueUpdated():
+		statusText := ""
+		if event.Changelog.Items != nil {
+			statusText = "[" + event.Changelog.Items[0].From + "] to [*" + event.Changelog.Items[0].To + "*]"
+		}
+
+		return &slack.Message{
+			Text: f.text(event, "*updated*", ""),
+			Attachments: []slack.Attachment{{
+				Title:     f.title(event),
+				TitleLink: event.Issue.BrowserURL(),
+				Text:      statusText,
+				Timestamp: event.UnixTime(),
+			}},
+		}
+
 	default:
 		return nil
 	}

@@ -41,6 +41,11 @@ func (s *Event) IsIssueDeleted() bool {
 	return s.WebhookEvent == "jira:issue_deleted"
 }
 
+// IsIssueUpdated is sent when an issue is deleted
+func (s *Event) IsIssueUpdated() bool {
+	return s.WebhookEvent == "jira:issue_updated"
+}
+
 // UnixTime returns UNIX time of the event
 func (s *Event) UnixTime() int64 {
 	return s.Timestamp / 1000
