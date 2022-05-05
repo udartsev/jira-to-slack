@@ -64,7 +64,7 @@ func (f *Formatter) JIRAEventToSlackMessage(event *jira.Event) *slack.Message {
 		}
 	case event.IsIssueCreated():
 		return &slack.Message{
-			Text: f.text(event, "*created*", f.mentions(event.Issue.Fields.Description)),
+			Text: f.text(event, "**created**", f.mentions(event.Issue.Fields.Description)),
 			Attachments: []slack.Attachment{{
 				Title:     f.title(event),
 				TitleLink: event.Issue.BrowserURL(),
@@ -74,7 +74,7 @@ func (f *Formatter) JIRAEventToSlackMessage(event *jira.Event) *slack.Message {
 		}
 	case event.IsIssueDeleted():
 		return &slack.Message{
-			Text: f.text(event, "*deleted*", ""),
+			Text: f.text(event, "**deleted**", ""),
 			Attachments: []slack.Attachment{{
 				Title:     f.title(event),
 				TitleLink: event.Issue.BrowserURL(),
@@ -85,11 +85,11 @@ func (f *Formatter) JIRAEventToSlackMessage(event *jira.Event) *slack.Message {
 		// @TODO: add icons here
 		statusText := ""
 		if event.Changelog.Items != nil && len(event.Changelog.Items) > 0 {
-			statusText = event.User.Name + "update status to *[" + event.Changelog.Items[0].To + "]*"
+			statusText = event.User.Name + " update status to **[" + event.Changelog.Items[0].To + "]**"
 		}
 
 		return &slack.Message{
-			Text: f.text(event, "*updated*", ""),
+			Text: f.text(event, "**updated**", ""),
 			Attachments: []slack.Attachment{{
 				Title:     f.title(event),
 				TitleLink: event.Issue.BrowserURL(),
